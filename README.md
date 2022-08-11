@@ -26,11 +26,74 @@ This repository contains the content and artifacts to perform the demo as shown 
 
 ## OpenFeature
 
+> ToDo: Intro and explanation of [OpenFeature](https://openfeature.dev/)
+
 ## Keptn
+
+> ToDo: Intro and explanation of [Keptn](https://keptn.sh/)
 
 ## Feature flagging and life-cycle orchestration together
 
+> ToDo: Explanation how OpenFeature and Keptn work together including an architectural diagram and explanation of the use case
+
 ## Step by step guide
+
+> ToDo: "How to" - to re-produce the demo
+
+### Initial Keptn setup
+
+This demo use [Keptn v0.18.1](https://github.com/keptn/keptn/releases/tag/0.18.1)
+
+* Install Keptn on your Kubernetes cluster using Helm. The installation details are provided [here](https://keptn.sh/docs/install/helm-install/#control-plane-installation-options).
+* Install Keptn CLI locally in order to communicate with your Keptn installation. The installation guide is provided [here](https://keptn.sh/docs/install/cli-install/) 
+* To authenticate the Keptn CLI against Keptn, 
+    * Open the Keptn bridge in a browser: `https://<your-keptn-host-name>/bridge` and log in with user `keptn` and password `****`
+    * After log in, open the user profile in the top right corner and copy the *keptn auth command*. 
+    * Paste the command in your shell to authenticate the Keptn CLI:
+    ```
+    keptn auth --endpoint=https://<your-keptn-host-name>/api --api-token=****
+    Starting to authenticate
+    Successfully authenticated against https://<your-keptn-host-name>/api
+    Bridge URL: https://<your-keptn-host-name>/bridge
+    Using a file-based storage for the key because the password-store seems to be not set up.
+    ```
+    * :tada: Congrates, Keptn is working and you are ready to move on. 
+
+### Keptn project and service setup
+
+#### Create Keptn project
+
+* To create a Keptn project, first create an empty Git repository and have your Git user name as well as a personal access token by hand. (see [Create a project](https://keptn.sh/docs/0.18.x/manage/project/) for more details) 
+* After creating a Git repository, run the following command: 
+```
+keptn create project fibonacci --shipyard=./shipyard.yaml --git-user=*** --git-token=*** --git-remote-url=***
+```
+* :tada: Awesome, continue with creating a service. 
+
+#### Create service and upload artifacts
+
+* Run the following command to create a service in your Keptn project: 
+```
+keptn create service fibo --project=fibonacci
+```
+* To upload its Helm Chart for deployment, execute:
+```
+cd ./fibo/helm
+tar -czvf fibo.tgz ./fibo/
+keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=fibo.tgz --resourceUri=helm/fibo.tgz
+```
+* To upload its test, execute:
+```
+keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=test.xxx --resourceUri=selenium/test.xxx
+```
+* :tada: Great, now you are ready to trigger the first deployment:
+```
+keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibo --image=<image of the service>
+```
+
+### Running the demo
+
+
 
 ## Summary
 
