@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fibo
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: fibo
+  template:
+    metadata:
+      labels:
+        app: fibo
+        app.kubernetes.io/name: {{ .Values.keptn.service }}
+        app.kubernetes.io/instance: "{{ .Values.keptn.service }}-{{ .Values.keptn.deployment }}"
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/part-of: keptn-{{ .Release.Namespace }}
+        app.kubernetes.io/version: {{ (split ":" .Values.image)._1 | default "latest" }}
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+        - name: server
+          image: "{{ .Values.image }}"
+          ports:
+          - containerPort: 8080
+          readinessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/health"
+              port: 8080
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-readiness-probe"
+          livenessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/health"
+              port: 8080
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-liveness-probe"
+          env:
+          - name: PORT
+            value: "8080"
+          - name: DT_CUSTOM_PROP
+            value: "keptn_project={{ .Values.keptn.project }} keptn_service={{ .Values.keptn.service }} keptn_stage={{ .Values.keptn.stage }} keptn_deployment={{ .Values.keptn.deployment }}"
+          # - name: JAEGER_SERVICE_ADDR
+          #   value: "jaeger-collector:14268"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+

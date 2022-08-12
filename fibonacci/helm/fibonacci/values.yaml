@@ -1,0 +1,2 @@
+image: fibo:v1.6
+replicaCount: 1

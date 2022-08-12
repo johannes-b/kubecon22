@@ -77,7 +77,7 @@ This repository contains the content and artifacts to perform the demo as shown 
     ```
 * To upload its Helm Chart for deployment, execute:
     ```
-    cd ./fibo/helm
+    cd ./fibonacci/helm
     tar -czvf fibo.tgz ./fibo/
     keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=fibo.tgz --resourceUri=helm/fibo.tgz
     ```
