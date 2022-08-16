@@ -10,7 +10,7 @@ spec:
       tasks:
       - name: deployment
         properties:
-          deploymentstrategy: direct
+          deploymentstrategy: user_managed
       - name: test
         properties:
           teststrategy: performance
@@ -28,7 +28,7 @@ spec:
       tasks:
       - name: deployment
         properties:
-          deploymentstrategy: direct
+          deploymentstrategy: user_managed
       - name: test
         properties:
           teststrategy: performance

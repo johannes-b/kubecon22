@@ -44,6 +44,14 @@ This repository contains the content and artifacts to perform the demo as shown 
 
 * This demo builds on [Keptn v0.18.1](https://github.com/keptn/keptn/releases/tag/0.18.1)
 * Install Keptn on your Kubernetes cluster using Helm. The installation details are provided [here](https://keptn.sh/docs/install/helm-install/#control-plane-installation-options).
+* Install two execution services; one for deployment, one for testing purpose: 
+    * helm-serivce:
+    ```
+    helm upgrade helm-service https://github.com/keptn/keptn/releases/download/0.18.1/helm-service-0.18.1.tgz -n keptn --create-namespace --wait
+    ```
+    * "test-service:" (selenium?)
+    ```
+    ```
 * Install Keptn CLI locally in order to communicate with your Keptn installation. The installation guide is provided [here](https://keptn.sh/docs/install/cli-install/) 
 * To authenticate the Keptn CLI against Keptn, 
     * Open the Keptn bridge in a browser: `https://<your-keptn-host-name>/bridge` and log in with user `keptn` and password `****`
@@ -78,7 +86,7 @@ This repository contains the content and artifacts to perform the demo as shown 
 * To upload its Helm Chart for deployment, execute:
     ```
     cd ./fibonacci/helm
-    tar -czvf fibo.tgz ./fibo/
+    tar -czvf fibo.tgz fibonacci
     keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=fibo.tgz --resourceUri=helm/fibo.tgz
     ```
 * To upload its test, execute:
