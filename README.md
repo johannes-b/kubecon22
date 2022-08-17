@@ -49,9 +49,26 @@ This repository contains the content and artifacts to perform the demo as shown 
     ```
     helm upgrade helm-service https://github.com/keptn/keptn/releases/download/0.18.1/helm-service-0.18.1.tgz -n keptn --create-namespace --wait
     ```
-    * "test-service:" (selenium?)
+    * job-executor-service for executing K6 tests
     ```
+    JES_VERSION=0.2.4
+
+    KEPTN_API_PROTOCOL=http
+    KEPTN_API_HOST=<YOUR_KEPTN_HOST_NAME>
+    KEPTN_API_TOKEN=<YOUR_KEPTN_API_TOKEN>
+
+    TASK_SUBSCRIPTION=sh.keptn.event.test.triggered
+
+    NAMESPACE=keptn-jes
+
+    helm upgrade --install --create-namespace -n ${NAMESPACE} job-executor-service \
+        https://github.com/keptn-contrib/job-executor-service/releases/download/${JES_VERSION}/job-executor-service-${JES_VERSION}.tgz \
+        --set remoteControlPlane.topicSubscription=${TASK_SUBSCRIPTION} \
+        --set remoteControlPlane.api.protocol=${KEPTN_API_PROTOCOL} \
+        --set remoteControlPlane.api.hostname=${KEPTN_API_HOST} \
+        --set remoteControlPlane.api.token=${KEPTN_API_TOKEN}
     ```
+
 * Install Keptn CLI locally in order to communicate with your Keptn installation. The installation guide is provided [here](https://keptn.sh/docs/install/cli-install/) 
 * To authenticate the Keptn CLI against Keptn, 
     * Open the Keptn bridge in a browser: `https://<your-keptn-host-name>/bridge` and log in with user `keptn` and password `****`
@@ -88,10 +105,14 @@ This repository contains the content and artifacts to perform the demo as shown 
     cd ./fibonacci/helm
     tar -czvf fibo.tgz fibonacci
     keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=fibo.tgz --resourceUri=helm/fibo.tgz
+    cd ../..
     ```
-* To upload its test, execute:
+* To upload its test and to configure the job executore service, execute:
     ```
-    keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=test.xxx --resourceUri=selenium/test.xxx
+    cd ./fibonacci/k6
+    keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=calculate.js --resourceUri=k6/calculate.js
+    keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=jobconfig.yaml --resourceUri=job/config.yaml
+    cd ../..
     ```
 * :+1: Great, now you are ready to trigger the first deployment:
     ```
