@@ -25,6 +25,14 @@ data:
           "defaultVariant": "red",
           "state": "ENABLED"
         },
+        "use-remote-fib-service": {
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
         "fib-algo": {
           "returnType": "string",
           "variants": {
