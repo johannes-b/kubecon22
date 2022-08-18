@@ -1,0 +1,13 @@
+apiVersion: v2
+actions:
+  - name: "Run k6"
+    events:
+      - name: "sh.keptn.event.test.triggered"
+    tasks:
+      - name: "Run k6 with Keptn"
+        files:
+          - /k6
+        image: "loadimpact/k6"
+        cmd: ["k6"]
+        # ToDo: set the correct stage
+        args: ["run", "-e", "BASE_URL=fibo.fibonacci-staging.svc.cluster.local:80", "--duration", "30s", "--vus", "10", "/keptn/k6/calculate.js"]
