@@ -98,29 +98,39 @@ This repository contains the content and artifacts to perform the demo as shown 
 
 * Run the following command to create a service in your Keptn project: 
     ```
-    keptn create service fibo --project=fibonacci
+    keptn create service fibonacci --project=fibonacci
+
+    keptn create service fib3r --project=fibonacci
     ```
 
 * To upload its Helm Chart for deployment, execute:
     ```
     cd ./fibonacci/helm
-    tar -czvf fibo.tgz fibonacci
-    keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=fibo.tgz --resourceUri=helm/fibo.tgz
+    tar -czvf fibonacci.tgz fibonacci
+    keptn add-resource --project=fibonacci --service=fibonacci --all-stages --resource=fibonacci.tgz --resourceUri=helm/fibonacci.tgz
+    cd ../..
+
+    cd ./fib3r/helm
+    tar -czvf fib3r.tgz fib3r
+    keptn add-resource --project=fibonacci --service=fib3r --all-stages --resource=fib3r.tgz --resourceUri=helm/fib3r.tgz
     cd ../..
     ```
 
 * To upload its test and to configure the job executore service, execute:
     ```
     cd ./fibonacci/k6
-    keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=calculate.js --resourceUri=k6/calculate.js
+    keptn add-resource --project=fibonacci --service=fibonacci --all-stages --resource=calculate.js --resourceUri=k6/calculate.js
 
-    keptn add-resource --project=fibonacci --service=fibo --stage=staging --resource=jobconfig_staging.yaml --resourceUri=job/config.yaml
-    keptn add-resource --project=fibonacci --service=fibo --stage=production --resource=jobconfig_production.yaml --resourceUri=job/config.yaml
+    keptn add-resource --project=fibonacci --service=fibonacci --stage=staging --resource=jobconfig_staging.yaml --resourceUri=job/config.yaml
+    keptn add-resource --project=fibonacci --service=fibonacci --stage=production --resource=jobconfig_production.yaml --resourceUri=job/config.yaml
     cd ../..
     ```
+
 * :+1: Great, now you are ready to trigger the first deployment:
     ```
-    keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibo --image=<image of the service>
+    keptn trigger delivery --sequence=delivery --project=fibonacci --service=fib3r --image=ghcr.io/beeme1mr/ghcr.io/beeme1mr/fib3r-kubecon-demo:latest
+
+    keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonacci --image=ghcr.io/beeme1mr/kubecon-demo:latest
     ```
 
 ### 3) Jaeger, Zipkin 
