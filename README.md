@@ -111,7 +111,8 @@ This repository contains the content and artifacts to perform the demo as shown 
     ```
     cd ./fibonacci/k6
     keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=calculate.js --resourceUri=k6/calculate.js
-    keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=jobconfig.yaml --resourceUri=job/config.yaml
+    keptn add-resource --project=fibonacci --service=fibo --stage=staging --resource=jobconfig_staging.yaml --resourceUri=job/config.yaml
+    keptn add-resource --project=fibonacci --service=fibo --stage=production --resource=jobconfig_production.yaml --resourceUri=job/config.yaml
     cd ../..
     ```
 * :+1: Great, now you are ready to trigger the first deployment:
