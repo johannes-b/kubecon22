@@ -20,6 +20,8 @@ spec:
       containers:
         - name: fibonacci
           image: "{{ .Values.image }}"
+          args:
+            - flagd
           imagePullPolicy: "Always"
           ports:
             - containerPort: 30000
