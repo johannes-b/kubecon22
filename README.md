@@ -100,6 +100,7 @@ This repository contains the content and artifacts to perform the demo as shown 
     ```
     keptn create service fibo --project=fibonacci
     ```
+
 * To upload its Helm Chart for deployment, execute:
     ```
     cd ./fibonacci/helm
@@ -107,10 +108,12 @@ This repository contains the content and artifacts to perform the demo as shown 
     keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=fibo.tgz --resourceUri=helm/fibo.tgz
     cd ../..
     ```
+
 * To upload its test and to configure the job executore service, execute:
     ```
     cd ./fibonacci/k6
     keptn add-resource --project=fibonacci --service=fibo --all-stages --resource=calculate.js --resourceUri=k6/calculate.js
+
     keptn add-resource --project=fibonacci --service=fibo --stage=staging --resource=jobconfig_staging.yaml --resourceUri=job/config.yaml
     keptn add-resource --project=fibonacci --service=fibo --stage=production --resource=jobconfig_production.yaml --resourceUri=job/config.yaml
     cd ../..
@@ -120,8 +123,29 @@ This repository contains the content and artifacts to perform the demo as shown 
     keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibo --image=<image of the service>
     ```
 
-### 3) Running the demo
+### 3) Jaeger, Zipkin 
 
+
+### 4) Running the demo
+
+Proposal:
+
+1. Keptn - Staging is green
+2. Keptn - Start prod deployment (progressive delivery)
+    * Update new version of demo app
+    * Start E2E test on new feature
+    * E2E test fails
+    * Send Slack message
+        * Screenshot (Optional)
+        * Link to Jaeger
+    * Troubleshoot auth issue
+3. Demo Config update with correct auth token
+4. Keptn - Rerun production deployment
+    * Update new version of demo app
+    * Start E2E test on new feature
+    * E2E test passes
+    * Update feature flag to be enabled for all users
+    * Send slack success message (Optional)
 
 
 ## Summary
