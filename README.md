@@ -128,12 +128,12 @@ This repository contains the content and artifacts to perform the demo as shown 
 
 * :+1: Great, now you are ready to trigger the first deployment:
     ```
-    keptn trigger delivery --sequence=delivery --project=fibonacci --service=fib3r --image=ghcr.io/beeme1mr/ghcr.io/beeme1mr/fib3r-kubecon-demo:latest
+    keptn trigger delivery --sequence=deployment --project=fibonacci --service=fib3r --image=ghcr.io/beeme1mr/fib3r-kubecon-demo:latest
 
     keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonacci --image=ghcr.io/beeme1mr/kubecon-demo:latest
     ```
 
-### 3) Jaeger, Zipkin 
+### 3) Jaeger 
 
 
 ### 4) Running the demo

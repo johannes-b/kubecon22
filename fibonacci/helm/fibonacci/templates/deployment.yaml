@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fibo
+  name: fibonacci
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: fibo
+      app: fibonacci
   template:
     metadata:
       labels:
-        app: fibo
+        app: fibonacci
         app.kubernetes.io/name: {{ .Values.keptn.service }}
         app.kubernetes.io/instance: "{{ .Values.keptn.service }}-{{ .Values.keptn.deployment }}"
         app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -18,8 +18,9 @@ spec:
         app.kubernetes.io/version: {{ (split ":" .Values.image)._1 | default "latest" }}
     spec:
       containers:
-        - name: fibo
+        - name: fibonacci
           image: "{{ .Values.image }}"
+          imagePullPolicy: "Always"
           ports:
             - containerPort: 30000
           env:
@@ -27,6 +28,10 @@ spec:
               value: "keptn_project={{ .Values.keptn.project }} keptn_service={{ .Values.keptn.service }} keptn_stage={{ .Values.keptn.stage }} keptn_deployment={{ .Values.keptn.deployment }}"
             - name: FIB3R_BASE_URL
               value: "fib3r.fibonacci-{{ .Values.keptn.stage }}.svc.cluster.local:30001"
+            - name: "FIB3R_USER"
+              value: "my-fib3r-user"
+            - name: "FIB3R_PASS"
+              value: "my-fib3r-password"
           resources:
             requests:
               cpu: 100m

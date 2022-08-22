@@ -6,6 +6,11 @@ spec:
   stages:
   - name: staging
     sequences:
+    - name: deployment
+      tasks:
+      - name: deployment
+        properties:
+          deploymentstrategy: user_managed
     - name: delivery
       tasks:
       - name: deployment
@@ -22,6 +27,13 @@ spec:
       - name: release
   - name: production
     sequences:
+    - name: deployment
+      triggeredOn:
+      - event: staging.deployment.finished
+      tasks:
+      - name: deployment
+        properties:
+          deploymentstrategy: user_managed
     - name: delivery
       triggeredOn:
       - event: staging.delivery.finished

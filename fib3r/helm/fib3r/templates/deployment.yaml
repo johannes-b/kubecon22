@@ -20,11 +20,16 @@ spec:
       containers:
         - name: fib3r
           image: "{{ .Values.image }}"
+          imagePullPolicy: "Always"
           ports:
             - containerPort: 30001
           env:
             - name: DT_CUSTOM_PROP
               value: "keptn_project={{ .Values.keptn.project }} keptn_service={{ .Values.keptn.service }} keptn_stage={{ .Values.keptn.stage }} keptn_deployment={{ .Values.keptn.deployment }}"
+            - name: "FIB3R_USER"
+              value: "my-fib3r-user"
+            - name: "FIB3R_PASS"
+              value: "my-fib3r-password"
           resources:
             requests:
               cpu: 100m
