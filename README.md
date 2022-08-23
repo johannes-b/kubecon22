@@ -139,7 +139,7 @@ This repository contains the content and artifacts to perform the demo as shown 
 
 ```
 helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
-helm upgrade -i jaeger jaegertracing/jaeger -n jaeger --create-namespace
+helm upgrade -i jaeger jaegertracing/jaeger -n jaeger --create-namespace --set collector.service.otlp.http.port=4318,collector.service.otlp.grpc.port=4317
 ```
 
 * Access Jaeger UI using
