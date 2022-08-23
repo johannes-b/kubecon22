@@ -28,6 +28,12 @@ spec:
           env:
             - name: DT_CUSTOM_PROP
               value: "keptn_project={{ .Values.keptn.project }} keptn_service={{ .Values.keptn.service }} keptn_stage={{ .Values.keptn.stage }} keptn_deployment={{ .Values.keptn.deployment }}"
+            - name: OTEL_TRACE_HOST
+              value: "localhost"
+            - name: SERVICE_NAME
+              value: "{{ .Values.keptn.service }}"
+            - name: ENVIRONMENT
+              value: "{{ .Values.keptn.stage }}"
             - name: FIB3R_BASE_URL
               value: "fib3r.fibonacci-{{ .Values.keptn.stage }}.svc.cluster.local:30001"
             - name: "FIB3R_USER"
