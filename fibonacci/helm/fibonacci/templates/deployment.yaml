@@ -4,6 +4,8 @@ metadata:
   name: fibonacci
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: fibonacci
@@ -29,7 +31,7 @@ spec:
             - name: DT_CUSTOM_PROP
               value: "keptn_project={{ .Values.keptn.project }} keptn_service={{ .Values.keptn.service }} keptn_stage={{ .Values.keptn.stage }} keptn_deployment={{ .Values.keptn.deployment }}"
             - name: OTEL_TRACE_HOST
-              value: "jaeger-collector.jaeger.svc.cluster.local:4318"
+              value: "jaeger-collector.jaeger.svc.cluster.local"
             - name: SERVICE_NAME
               value: "{{ .Values.keptn.service }}-{{ .Values.keptn.stage }}"
             - name: ENVIRONMENT
