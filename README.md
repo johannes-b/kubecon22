@@ -133,8 +133,22 @@ This repository contains the content and artifacts to perform the demo as shown 
     keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonacci --image=ghcr.io/beeme1mr/kubecon-demo:latest
     ```
 
-### 3) Jaeger 
+### 3) Jaeger
 
+* Install Jaeger using its Helm Chart: https://jaegertracing.github.io/helm-charts/
+
+```
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+helm upgrade -i jaeger jaegertracing/jaeger -n jaeger --create-namespace
+```
+
+* Access Jaeger UI using
+
+```
+export POD_NAME=$(kubectl get pods --namespace jaeger -l "app.kubernetes.io/instance=jaeger,app.kubernetes.io/component=query" -o jsonpath="{.items[0].metadata.name}")
+echo http://127.0.0.1:8080/
+kubectl port-forward --namespace jaeger $POD_NAME 8080:16686
+```
 
 ### 4) Running the demo
 
