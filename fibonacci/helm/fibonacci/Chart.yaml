@@ -1,4 +1,4 @@
 apiVersion: v1
-description: A Helm chart for the fibo
-name: fibo
+description: A Helm chart for the fibonacci frontend service
+name: fibonacci
 version: 0.1.0
