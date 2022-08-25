@@ -50,3 +50,11 @@ spec:
       #    pass: automatic
       #    warning: automatic
       - name: release
+    - name: notify
+      triggeredOn:
+      - event: production.delivery.finished
+        selector:
+          match:
+            result: "fail"
+      tasks:
+      - name: notify
