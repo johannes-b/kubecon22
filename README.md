@@ -40,7 +40,9 @@ This repository contains the content and artifacts to perform the demo as shown 
 
 > ToDo: "How to" - to re-produce the demo
 
-### 1) Initial Keptn setup
+### 1) Keptn setup
+
+#### 1.1) Initial setup
 
 * This demo builds on [Keptn v0.18.1](https://github.com/keptn/keptn/releases/tag/0.18.1)
 * Install Keptn on your Kubernetes cluster using Helm. The installation details are provided [here](https://keptn.sh/docs/install/helm-install/#control-plane-installation-options).
@@ -82,6 +84,10 @@ This repository contains the content and artifacts to perform the demo as shown 
     Using a file-based storage for the key because the password-store seems to be not set up.
     ```
     * :tada: Congrates, Keptn is working and you are ready to move on creating a project and service.
+
+#### 1.2) Configure Slack notification
+
+> ToDo: Description on how to configure Slack notification
 
 ### 2) Keptn project and service setup
 
