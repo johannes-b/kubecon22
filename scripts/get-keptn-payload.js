@@ -18,7 +18,7 @@ module.exports = ({ context }) => {
     source: "github",
     specversion: "1.0",
     // TODO see what the event name is
-    type: "sh.keptn.event.mytask-active.finished",
+    type: "sh.keptn.event.enable-feature.finished",
     shkeptncontext: parsedLabels["shkeptncontext"],
     triggeredid: parsedLabels["triggeredid"],
   });
