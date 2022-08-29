@@ -9,14 +9,14 @@ This repository contains the content and artifacts to perform the demo as shown 
 **Goal:** *The goal of this talk is to inspire community consideration of various methods of end-to-end production testing and to demonstrate the power of integrating multiple CNCF projects to solve real-world problems. We will be utilizing several projects including OpenFeature, Keptn, and OpenTelemetry.*
 
 
-## Speakers
+# Speakers
 
 *[Johannes Bräuer](https://github.com/johannes-b)* - In his role as Product Manager, Johannes drives the roadmap of the Keptn project and supports the Keptn community. He is passionate about approaches for microservice architectures, process automation, and sharing his findings with others. Before joining Dynatrace, he earned a PhD in Business Informatics by conducting research in measuring source code and software design quality. When Johannes is not in front of a computer, you can find him on a mountain bike and hiking trails. (August 2022)
 
 *[Michael Beemer](https://github.com/beeme1mr)* – Michael is a Product Manager at Dynatrace. He has years of experience in the observability space working as a Consultant, DevOps Engineer, Software Developer, and Product Manager. Michael enjoys pushing the boundary of what’s possible with observability, in an effort to unlock hidden potential. He also co-founded OpenFeature, an effort to bring standardization to the feature flagging community. (August 2022)
 
 
-## Table of content
+# Table of content
 
 * OpenFeature Intro
 * Keptn Intro 
@@ -24,25 +24,25 @@ This repository contains the content and artifacts to perform the demo as shown 
 * Step-by-step guide of the demo
 * Summary
 
-## OpenFeature
+# OpenFeature
 
 > ToDo: Intro and explanation of [OpenFeature](https://openfeature.dev/)
 
-## Keptn
+# Keptn
 
 > ToDo: Intro and explanation of [Keptn](https://keptn.sh/)
 
-## Feature flagging and life-cycle orchestration together
+# Feature flagging and life-cycle orchestration together
 
 > ToDo: Explanation of how OpenFeature and Keptn work together including an architectural diagram and explanation of the use case
 
-## Step-by-step guide
+# Step-by-step guide
 
 > ToDo: "How to" - to re-produce the demo
 
-### 1) Keptn setup
+## 1) Keptn setup
 
-#### 1.1) Initial setup
+### 1.1) Initial setup
 
 * This demo builds on [Keptn v0.18.1](https://github.com/keptn/keptn/releases/tag/0.18.1)
 * Install Keptn on your Kubernetes cluster using Helm. The installation details are provided [here](https://keptn.sh/docs/install/helm-install/#control-plane-installation-options).
@@ -85,13 +85,117 @@ This repository contains the content and artifacts to perform the demo as shown 
     ```
     * :tada: Congrates, Keptn is working and you are ready to move on creating a project and service.
 
-#### 1.2) Configure Slack notification
+### 1.2) Configure Slack integration
 
-> ToDo: Description on how to configure Slack notification
+#### Create Slack webhook
 
-### 2) Keptn project and service setup
+* Create Slack webhook: In Slack, please follow the guidelines to enable [Incomming Webhooks](https://api.slack.com/messaging/webhooks).
 
-#### Create Keptn project
+* Store Slack webhook as a Keptn secret: To secure the Slack hook, a Keptn secret must be created. To do this, go to the Keptn project `Settings` > `Secrets` and click the `Add Secret` button. On that form fill the following values:
+    * Name: Name such as `slack-secret`
+    * Scope: `keptn-webhook-service`
+    * Key-value pairs: Click the new key-value pair button and add these values:
+        * Key = Name such as `HOOK`
+        * Value = The Slack webhook from the previous step starting after `services/`. (e.g, `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX`)
+
+#### Notify on failure
+
+In order to link to: http://localhost:8080/search?end=1661774110001000&limit=20&lookback=1h&maxDuration&minDuration&service=fibonacci-production&start=1661770510001000&tags=%7B%22feature_flag.flag_key%22%3A%22use-remote-fib-service%22%7D
+
+
+* In Keptn, navigate to `Settings` and select the webhook-service
+* Click the `Add subscription` button, to create a new event subscription on the currently selected project
+* In this form, fill out the following fields:
+    * Task: `notify`
+    * Task suffix: `triggered`
+* In the Webhook configuration form section fill out the following:
+    * Request Method: `POST`
+    * URL: https://hooks.slack.com/services/{{.secret.slack-webhook.HOOK}}
+    * Payload:
+    ```
+    { 
+        "blocks": [
+            {
+            "type" : "section",
+            "text" : {
+                "type": "mrkdwn",
+                "text" : "*Delivery failed*"
+            }
+            },
+            {
+            "type" : "section",
+            "text" : {
+                "type": "mrkdwn",
+                "text" : "*Project:* {{.data.project}}\n*Stage:* {{.data.stage}}\n*Service:* {{.data.service}}\n*Traces in Jaeger:* http://localhost:8080/search?lookback=1h&maxDuration&minDuration&service=fibonacci-production&tags=%7B%22feature_flag.flag_key%22%3A%22use-remote-fib-service%22%7D"
+            }
+            }
+        ]
+    }
+    ```
+    * Finally, click **Create subscription** to save and enable the webhook for your Slack integration.
+
+#### Notify on successful release
+
+* In Keptn, navigate to `Settings` and select the webhook-service
+* Click the `Add subscription` button, to create a new event subscription on the currently selected project
+* In this form, fill out the following fields:
+    * Task: `release`
+    * Task suffix: `finished`
+* In the Webhook configuration form section fill out the following:
+    * Request Method: `POST`
+    * URL: https://hooks.slack.com/services/{{.secret.slack-webhook.token}}
+    * Payload:
+    ```
+    { 
+        "text":"Release in {{.data.stage}} finished, feature enabled"
+    }
+    ```
+    * Finally, click **Create subscription** to save and enable the webhook for your Slack integration.
+
+### 1.3 ) Configure GitHub integration
+
+#### GitHub access token
+
+* Get GitHub Access Token: A GitHub personal access token (PAT) is required to pass within the Keptn webhook authorization header in order for the GitHub API to authenticate the request. Follow these instructions in the [GitHub docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) to create your token and be sure that you have given the token access to the `repo` scope.
+
+* Store GitHub token as a Keptn secret: To secure the GitHub Access Token, a Keptn secret must be created. To do this, go to the Keptn project `Settings` > `Secrets` and click the `Add Secret` button. On that form fill the following values:
+    * Name: Name such as `github-secret`
+    * Scope: `keptn-webhook-service`
+    * Key-value pairs: Click the new key-value pair button and add these values:
+        * Key = Name such as `GITHUBTOKEN`
+        * Value = The GitHub Access Token from the step from previous section
+
+#### Create workflow in your GitHub repository
+
+#### Trigger workflow to enable feature
+
+* In Keptn, navigate to `Settings` and select the webhook-service
+* Click the `Add subscription` button, to create a new event subscription on the currently selected project
+* In this form, fill out the following fields:
+    * Task: `enable-feature`
+    * Task suffix: `triggered`
+* In the Webhook configuration form section fill out the following:
+    * Request Method: `POST`
+    * URL: https://api.github.com/repos/{GIT_ORG}/{GIT_REPO}/dispatches
+    * Payload:
+    ```
+    {
+        "event_type": "enable-feature",
+        "client_payload": {
+            "type": "{{.type}}",
+            "project": "{{.data.project}}",
+            "service": "{{.data.service}}",
+            "stage": "{{.data.stage}}",
+            "shkeptncontext": "{{.shkeptncontext}}",
+            "id": "{{.id}}"
+        }
+    }
+    ```
+    * Finally, click **Create subscription** to save and enable the webhook for your Slack integration.
+
+## 2) Keptn project and service setup
+
+### Create Keptn project
 
 * To create a Keptn project, first create an empty Git repository and have your Git user name as well as a personal access token by hand. (see: [Create a project](https://keptn.sh/docs/0.18.x/manage/project/) for more details) 
 * After creating a Git repository, run the following command: 
@@ -100,7 +204,7 @@ This repository contains the content and artifacts to perform the demo as shown 
     ```
 * :sparkles: Awesome, continue with creating a service. 
 
-#### Create service and upload artifacts
+### Create service and upload artifacts
 
 * Run the following command to create a service in your Keptn project: 
     ```
@@ -139,7 +243,7 @@ This repository contains the content and artifacts to perform the demo as shown 
     keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonacci --image=ghcr.io/beeme1mr/kubecon-demo:latest
     ```
 
-### 3) Jaeger
+## 3) Jaeger
 
 * Install Jaeger using its Helm Chart: https://jaegertracing.github.io/helm-charts/
 
@@ -156,7 +260,8 @@ echo http://127.0.0.1:8080/
 kubectl port-forward --namespace jaeger $POD_NAME 8080:16686
 ```
 
-### 4) Running the demo
+
+## 4) Running the demo
 
 Proposal:
 
@@ -178,4 +283,4 @@ Proposal:
     * Send slack success message (Optional)
 
 
-## Summary
+# Summary
