@@ -1,0 +1,65 @@
+name: Enable Feature
+on:
+  repository_dispatch:
+    types:
+      - active-task
+
+# Payload expected
+# - flag_key
+# - default_variant
+# - shkeptncontext
+# - id
+# - project
+# - stage
+# - service
+
+jobs:
+  enable_feature_job:
+    name: Run Enable Feature
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      # https://github.com/marketplace/actions/read-yaml
+      - name: Extract Feature Flag Config from YAML
+        id: get-feature-flags
+        uses: KJ002/read-yaml@main
+        with:
+          file: "fibonacci/helm/fibonacci/templates/configmap.yaml"
+          key-path: '["data", "config.json"]'
+
+      - name: Enable Feature Flag
+        uses: sergeysova/jq-action@v2
+        id: enable-feature
+        with:
+          cmd: |
+            echo '${{ steps.get-feature-flags.outputs.data }}' |
+            jq '.flags."${{ github.event.client_payload.flag_key }}".defaultVariant="${{ github.event.client_payload.default_variant }}"' |
+            jq '.flags."${{ github.event.client_payload.flag_key }}".targeting={}'
+          multiline: true
+
+      - name: Update Feature Config
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: "fibonacci/helm/fibonacci/templates/configmap.yaml"
+          propertyPath: 'data["config.json"]'
+          value: ${{ steps.enable-feature.outputs.value }}
+          branch: enable-feature/${{ github.event.client_payload.flag_key }}
+          targetBranch: master
+          createPR: true
+          message: "Update ${{ github.event.client_payload.flag_key }} default variant to '${{ github.event.client_payload.default_variant }}'"
+          # TODO make the PR description useful
+          description: |
+            # Overview
+
+            Tests ran and everything looks great!
+
+            Links
+              - [Test Results](https://google.com)
+          labels: |
+            shkeptncontext:${{ github.event.client_payload.shkeptncontext }},
+            triggeredid:${{ github.event.client_payload.id }},
+            project:${{ github.event.client_payload.project }},
+            stage:${{ github.event.client_payload.stage }},
+            service:${{ github.event.client_payload.service }}
