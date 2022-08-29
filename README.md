@@ -100,7 +100,7 @@ This repository contains the content and artifacts to perform the demo as shown 
 
 #### Notify on failure
 
-In order to link to: http://localhost:8080/search?end=1661774110001000&limit=20&lookback=1h&maxDuration&minDuration&service=fibonacci-production&start=1661770510001000&tags=%7B%22feature_flag.flag_key%22%3A%22use-remote-fib-service%22%7D
+In order to link to: http://localhost:8080/search?lookback=1h&service=fibonacci-production&tags=%7B%22feature_flag.flag_key%22%3A%22use-remote-fib-service%22%7D
 
 
 * In Keptn, navigate to `Settings` and select the webhook-service
@@ -113,21 +113,26 @@ In order to link to: http://localhost:8080/search?end=1661774110001000&limit=20&
     * URL: https://hooks.slack.com/services/{{.secret.slack-webhook.HOOK}}
     * Payload:
     ```
-    { 
+    {
+        "text": "Delivery failed.",
         "blocks": [
             {
-            "type" : "section",
-            "text" : {
-                "type": "mrkdwn",
-                "text" : "*Delivery failed*"
-            }
-            },
-            {
-            "type" : "section",
-            "text" : {
-                "type": "mrkdwn",
-                "text" : "*Project:* {{.data.project}}\n*Stage:* {{.data.stage}}\n*Service:* {{.data.service}}\n*Traces in Jaeger:* http://localhost:8080/search?lookback=1h&maxDuration&minDuration&service=fibonacci-production&tags=%7B%22feature_flag.flag_key%22%3A%22use-remote-fib-service%22%7D"
-            }
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "Delivery failed."
+                },
+                "accessory": {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "Open Jaeger",
+                        "emoji": true
+                    },
+                    "value": "click_me_123",
+                    "url": "http://localhost:8080/search",
+                    "action_id": "button-action"
+                }
             }
         ]
     }
@@ -147,7 +152,7 @@ In order to link to: http://localhost:8080/search?end=1661774110001000&limit=20&
     * Payload:
     ```
     { 
-        "text":"Release in {{.data.stage}} finished, feature enabled"
+        "text":"Release in {{.data.stage}} finished, with feature enabled"
     }
     ```
     * Finally, click **Create subscription** to save and enable the webhook for your Slack integration.
@@ -166,6 +171,10 @@ In order to link to: http://localhost:8080/search?end=1661774110001000&limit=20&
         * Value = The GitHub Access Token from the step from previous section
 
 #### Create workflow in your GitHub repository
+
+> TODO: Create GitHub action to file a PR for chancing the configmap on `sh.keptn.event.enable-feature.triggered`
+
+> TODO: Create GitHub action to send: `sh.keptn.event.enable-feature.finished`
 
 #### Trigger workflow to enable feature
 
