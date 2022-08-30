@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: feature-flags
 data:
-  config.json: |
+  config.json: |-
     {
       "flags": {
         "new-welcome-message": {
@@ -34,9 +34,16 @@ data:
           "defaultVariant": "off",
           "targeting": {
             "if": [
-            { "in": ["k6", { "var": "userAgent" }] },
-            "on",
-            null
+              {
+                "in": [
+                  "k6",
+                  {
+                    "var": "userAgent"
+                  }
+                ]
+              },
+              "on",
+              null
             ]
           }
         },
@@ -53,10 +60,17 @@ data:
           "targeting": {
             "if": [
               {
-                "in": ["@faas.com", {
-                  "var": ["email"]
-                }]
-              }, "binet", null
+                "in": [
+                  "@faas.com",
+                  {
+                    "var": [
+                      "email"
+                    ]
+                  }
+                ]
+              },
+              "binet",
+              null
             ]
           }
         }
