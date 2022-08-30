@@ -2,7 +2,7 @@ name: Enable Feature
 on:
   repository_dispatch:
     types:
-      - active-task
+      - enable-feature
 
 # Payload expected
 # - flag_key
@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+        with:
+          ref: "${{ github.event.client_payload.stage }}"
 
       # https://github.com/marketplace/actions/read-yaml
       - name: Extract Feature Flag Config from YAML
@@ -46,7 +48,8 @@ jobs:
           propertyPath: 'data["config.json"]'
           value: ${{ steps.enable-feature.outputs.value }}
           branch: enable-feature/${{ github.event.client_payload.flag_key }}
-          targetBranch: master
+          targetBranch: ${{ github.event.client_payload.stage }}
+          masterBranchName: ${{ github.event.client_payload.stage }}
           createPR: true
           message: "Update ${{ github.event.client_payload.flag_key }} default variant to '${{ github.event.client_payload.default_variant }}'"
           # TODO make the PR description useful
@@ -58,7 +61,7 @@ jobs:
             Links
               - [Test Results](https://google.com)
           labels: |
-            shkeptncontext:${{ github.event.client_payload.shkeptncontext }},
+            context:${{ github.event.client_payload.shkeptncontext }},
             triggeredid:${{ github.event.client_payload.id }},
             project:${{ github.event.client_payload.project }},
             stage:${{ github.event.client_payload.stage }},

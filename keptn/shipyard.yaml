@@ -49,6 +49,7 @@ spec:
       #  properties:
       #    pass: automatic
       #    warning: automatic
+      - name: enable-feature
       - name: release
     - name: notify
       triggeredOn:
