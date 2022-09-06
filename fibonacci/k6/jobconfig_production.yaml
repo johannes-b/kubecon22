@@ -4,7 +4,11 @@ actions:
     events:
       - name: "sh.keptn.event.test.triggered"
     tasks:
-      - name: "Run k6 with Keptn"
+      - name: "Launching k6"
+        image: "alpine:3.16.2"
+        cmd: ["sleep"]
+        args: ["10"]
+      - name: "Run k6 for Fibonacci"
         files:
           - /k6
         image: "loadimpact/k6:0.39.0"
