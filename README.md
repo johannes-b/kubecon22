@@ -306,6 +306,88 @@ kubectl port-forward --namespace jaeger $POD_NAME 8080:16686
 
 * On the `production` branch in your upstream repository, set `FIB3R_PASS` to a value other than `my-fib3r-password`. You will find this setting in: `/fibonacci/helm/fibonacci/templates/deployment.yaml`
 
+* Reseting the feature flag: 
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: feature-flags
+data:
+  config.json: |-
+    {
+      "flags": {
+        "new-welcome-message": {
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "on"
+        },
+        "hex-color": {
+          "returnType": "string",
+          "variants": {
+            "red": "CC0000",
+            "green": "00CC00",
+            "blue": "0000CC",
+            "yellow": "yellow"
+          },
+          "defaultVariant": "red",
+          "state": "ENABLED"
+        },
+        "use-remote-fib-service": {
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off",
+          "targeting": {
+            "if": [
+              {
+                "in": [
+                  "k6",
+                  {
+                    "var": "userAgent"
+                  }
+                ]
+              },
+              "on",
+              null
+            ]
+          }
+        },
+        "fib-algo": {
+          "returnType": "string",
+          "variants": {
+            "recursive": "recursive",
+            "memo": "memo",
+            "loop": "loop",
+            "binet": "binet"
+          },
+          "defaultVariant": "recursive",
+          "state": "ENABLED",
+          "targeting": {
+            "if": [
+              {
+                "in": [
+                  "@faas.com",
+                  {
+                    "var": [
+                      "email"
+                    ]
+                  }
+                ]
+              },
+              "binet",
+              null
+            ]
+          }
+        }
+      }
+    }
+```
 
 ### Starting a progressive delivery of the fibonacci service (main service)
 
