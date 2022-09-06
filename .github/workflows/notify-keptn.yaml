@@ -16,11 +16,9 @@ jobs:
           script: |
             const script = require('./scripts/get-keptn-payload.js')
             return script({context})
-
       - name: Send finished event
         run: |
           curl -X POST "${{ secrets.KEPTN_API_URL }}/v1/event" -H "Content-Type: application/json" -H "accept: application/json" -H "x-token: ${{ secrets.KEPTN_API_TOKEN }}" -d ${{steps.get-payload.outputs.result}}
-
   close_job:
     # this job will only run if the PR has been closed without being merged
     if: github.event.pull_request.merged == false
@@ -33,7 +31,6 @@ jobs:
           script: |
             const script = require('./scripts/get-keptn-payload.js')
             return script({context})
-
       - name: Send finished event
         run: |
           curl -X POST "${{ secrets.KEPTN_API_URL }}/v1/event" -H "Content-Type: application/json" -H "accept: application/json" -H "x-token: ${{ secrets.KEPTN_API_TOKEN }}" -d ${{steps.get-payload.outputs.result}}

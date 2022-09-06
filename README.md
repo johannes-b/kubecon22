@@ -159,7 +159,7 @@ In order to link to: http://localhost:8080/search?lookback=1h&service=fibonacci-
 
 ### 1.3 ) Configure GitHub integration
 
-#### GitHub access token
+#### Get GitHub access token
 
 * Get GitHub Access Token: A GitHub personal access token (PAT) is required to pass within the Keptn webhook authorization header in order for the GitHub API to authenticate the request. Follow these instructions in the [GitHub docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) to create your token and be sure that you have given the token access to the `repo` scope.
 
@@ -172,6 +172,13 @@ In order to link to: http://localhost:8080/search?lookback=1h&service=fibonacci-
 
 #### Create workflow in your GitHub repository
 
+In the upstream repository of your Keptn project, you need to create two GitHub actions for two tasks: 
+1. Updating a feature flag in a configmap to enable a feature for all users
+2. Notifying Keptn about the configuraiton change. 
+
+
+* In the upstream repository on the master branch create the folder: `./github/workflows`
+* 
 > TODO: Create GitHub action to file a PR for chancing the configmap on `sh.keptn.event.enable-feature.triggered`
 
 > TODO: Create GitHub action to send: `sh.keptn.event.enable-feature.finished`
@@ -186,18 +193,21 @@ In order to link to: http://localhost:8080/search?lookback=1h&service=fibonacci-
 * In the Webhook configuration form section fill out the following:
     * Request Method: `POST`
     * URL: https://api.github.com/repos/{GIT_ORG}/{GIT_REPO}/dispatches
+    * Custom header: `Authorization` `token {{.secret.github-secret.GITHUBTOKEN}}`
     * Payload:
     ```
     {
-        "event_type": "enable-feature",
-        "client_payload": {
-            "type": "{{.type}}",
-            "project": "{{.data.project}}",
-            "service": "{{.data.service}}",
-            "stage": "{{.data.stage}}",
-            "shkeptncontext": "{{.shkeptncontext}}",
-            "id": "{{.id}}"
-        }
+    "event_type": "enable-feature",
+    "client_payload": {
+        "type": "{{.type}}",
+        "project": "{{.data.project}}",
+        "service": "{{.data.service}}",
+        "stage": "{{.data.stage}}",
+        "shkeptncontext": "{{.shkeptncontext}}",
+        "id": "{{.id}}",
+        "default_variant": "on",
+        "flag_key": "use-remote-fib-service"
+    }
     }
     ```
     * Finally, click **Create subscription** to save and enable the webhook for your Slack integration.
@@ -213,7 +223,7 @@ In order to link to: http://localhost:8080/search?lookback=1h&service=fibonacci-
     ```
 * :sparkles: Awesome, continue with creating a service. 
 
-### Create service and upload artifacts
+### Create Keptn service and upload artifacts
 
 * Run the following command to create a service in your Keptn project: 
     ```
@@ -270,26 +280,52 @@ kubectl port-forward --namespace jaeger $POD_NAME 8080:16686
 ```
 
 
-## 4) Running the demo
+## 4) Demo flow
 
-Proposal:
 
-1. Keptn - Staging is green
-2. Keptn - Start prod deployment (progressive delivery)
-    * Update new version of demo app
-    * Start E2E test on new feature
-    * E2E test fails
-    * Send Slack message
-        * Screenshot (Optional)
-        * Link to Jaeger
-    * Troubleshoot auth issue
-3. Demo Config update with correct auth token
-4. Keptn - Rerun production deployment
-    * Update new version of demo app
-    * Start E2E test on new feature
-    * E2E test passes
-    * Update feature flag to be enabled for all users
-    * Send slack success message (Optional)
+### Prerequisite
 
+* On the `production` branch in your upstream repository, set `FIB3R_PASS` to a value other than `my-fib3r-password`. You will find this setting in: `/fibonacci/helm/fibonacci/templates/deployment.yaml`
+
+
+### Starting a progressive delivery of the fibonacci service (main service)
+
+```
+keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonacci --image=ghcr.io/beeme1mr/kubecon-demo:latest
+```
+
+* In Keptn, the delivery of the new version in staging was successful and shows a green state: 
+
+![Delivery in staging](./img/staging_finished.png)
+
+
+* After the delivery in staging, Keptn starts a progressive delivery in production. This process will:  
+    * Update the version of the fibonacci service
+    * Deploy the new version using Helm
+    * Start an end-to-end test using K6
+
+* However, the end-to-end tests will fail. 
+    * Consequently, Keptn sends out a Slack message with a link to Jaeger helping the user to trouble shoot the problem. 
+
+* In Jaeger, it will be obvious that the authentication was not working due to the wrong password.
+ 
+* To continue the demo, the variable `FIB3R_PASS` has to be set to `my-fib3r-password`.
+
+
+### Re-running the delivery
+
+```
+keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonacci --image=ghcr.io/beeme1mr/kubecon-demo:latest
+```
+
+* Like in the first run, the delivery in staging will be successfull and shows a green state. 
+
+* After the delivery in staging, Keptn starts a progressive delivery in production.This process will:  
+    * Update the version of the fibonacci service
+    * Deploy the new version using Helm
+    * Start an end-to-end test using K6
+
+* This time, the end-to-end test will pass. 
+    * Consequently, Keptn will trigger an config change in production in order to enable the new feature for all users. 
 
 # Summary
