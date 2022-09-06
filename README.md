@@ -4,7 +4,7 @@ This repository contains the content and artifacts to perform the demo as shown 
 
 **Abstract:** *Releasing a new feature into production always comes with an inherent risk of introducing issues. The code may have been thoroughly tested in lower environments, but differences like environment-specific configurations can cause unexpected behaviour. Feature flagging helps reduce this risk by allowing a subset of users to verify a new feature in production before exposing it to all. But how can we achieve hands-off feature release automation?*
 
-*This session will demonstrate how feature flagging and life-cycle orchestration work together to automate feature releases. Keptn will be the orchestration layer to automate feature validation. It works with OpenFeature to control access to the feature itself, allowing automated tests to verify a feature before it's generally available to users. Keptn will then react on the test results by either progressively enabling the feature for all users or initiating a troubleshooting workflow using OpenTelemetry.* 
+*This session will demonstrate how feature flagging and lifecycle orchestration work together to automate feature releases. Keptn will be the orchestration layer to automate feature validation. It works with OpenFeature to control access to the feature itself, allowing automated tests to verify a feature before it's generally available to users. Keptn will then react on the test results by either progressively enabling the feature for all users or initiating a troubleshooting workflow using OpenTelemetry.* 
 
 **Goal:** *This talk aims to inspire community consideration of various methods of end-to-end production testing and to demonstrate the power of integrating multiple CNCF projects to solve real-world problems. We will be utilizing several projects, including OpenFeature, Keptn, and OpenTelemetry.*
 
@@ -17,13 +17,30 @@ This repository contains the content and artifacts to perform the demo as shown 
 
 # OpenFeature Introduction
 
-> ToDo: Intro and explanation of [OpenFeature](https://openfeature.dev/)
+> [OpenFeature website](https://openfeature.dev/)
 
 # Keptn Introduction
 
-> ToDo: Intro and explanation of [Keptn](https://keptn.sh/)
+> [Keptn website](https://keptn.sh/)
 
-# Feature flagging and life-cycle orchestration together
+Keptn is an open-source control plane for orchestrating **continuous delivery (CD)** and **operational processes** of cloud-based applications. It started in January 2019 by the company Dynatrace and then donated to the Cloud-Native Computing Foundation (CNCF) in 2020. For more information in general, please visit: [keptn.sh](https://keptn.sh/why-keptn/)
+
+Keptn supports a declarative approach to building scalable automation routines for continuous delivery and operations. Keptn
+can invoke services from external DevOps tools and consumes the generated events while executing continuous delivery. Currently, the integrated tools support testing, observability, deployment activities, and web-hooks to web applications. A list of those integrations is managed on the [ArtifactHub](https://artifacthub.io/packages/search?ts_query_web=keptn).
+
+To configure the provisioning of services, Keptn relies on declarative artifacts or specifications.
+
+* *[Shipyard](https://github.com/keptn/spec/blob/master/shipyard.md)*: The Shipyard specification declares a multi-stage delivery workflow by defining what needs to be done. A delivery workflow is based on multiple stages, each with different task sequences. A task sequence is a set of actions for a specific delivery or operational process. Following this declarative approach, there is no need to write imperative pipeline code.
+
+* *[Keptn Events](https://github.com/keptn/spec/blob/master/cloudevents.md)*: Keptn will send out events for tool integrations. All Keptn events conform to the CloudEvents spec in [version 1.0](https://github.com/cloudevents/spec/blob/v1.0/spec.md). The CloudEvents specification is a vendor-neutral specification for defining event data format.
+
+* *[SLI](https://github.com/keptn/spec/blob/master/service_level_indicator.md) and [SLO](https://github.com/keptn/spec/blob/master/service_level_objective.md)*: (**Out of scope for this demo**) A service-level indicator (SLI) is a carefully defined quantitative measure of some aspect of the level of service that is provided. A service-level objective (SLO) is a target value or range of values for a service level that an SLI measures. Together, the SLI/SLO specifications declare a quality gate for a given service. This quality gate can be leveraged in the delivery or operational process to measure the defined quality criteria.
+
+* *[Remediation](https://github.com/keptn/spec/blob/master/remediation.md)*: (**Out of scope for this demo**) The Remediation defines remediation actions to execute in response to a problem. Keptn interprets this configuration to trigger the proper remediation actions.
+
+In this demo, Keptn will be used to manage the lifecycle of the Fibonacci service. Therefore, a multi-stage delivery process is set up to have a staged rollout from a staging to a production environment. The delivery process in production contains the tasks of artifact deployment, test, config change, and release. Besides, Keptn will inform about failed tests or successfully released artifacts in production.   
+
+# Feature flagging and lifecycle orchestration together
 
 > ToDo: Explanation of how OpenFeature and Keptn work together, including an architectural diagram and explanation of the use case
 
@@ -35,9 +52,9 @@ This section will provide a step-by-step guide to:
 * Install Jaeger for trace observability
 * Run the demo
 
-## 1) Keptn setup
+## Keptn setup
 
-### 1.1) Initial setup
+### Initial Keptn setup
 
 * This demo builds on [Keptn v0.18.1](https://github.com/keptn/keptn/releases/tag/0.18.1)
 
@@ -88,7 +105,7 @@ This section will provide a step-by-step guide to:
 
     * :tada: Congrates, Keptn is working and you're ready to move on creating a project and service.
 
-### 1.2) Configure Slack integration
+### Configure Slack integration
 
 #### Create Slack webhook
 
@@ -160,7 +177,7 @@ To link to: http://localhost:8080/search?lookback=1h&service=fibonacci-productio
     ```
     * Finally, click **Create subscription** to save and enable the webhook for your Slack integration.
 
-### 1.3 ) Configure GitHub integration
+### Configure GitHub integration
 
 #### Get GitHub access token
 
@@ -178,7 +195,6 @@ To link to: http://localhost:8080/search?lookback=1h&service=fibonacci-productio
 In the upstream repository of your Keptn project, you need to create two GitHub actions for two tasks: 
 1. Updating a feature flag in a configmap to enable a feature for all users. The Keptn event: `sh.keptn.event.enable-feature.triggered` will trigger this action.
 2. Notifying Keptn about the configuration change. This action will send the event `sh.keptn.event.enable-feature.finished` to Keptn.
-
 
 * In the upstream repository on the master branch, create the folder: `./github/workflows`
 
@@ -213,7 +229,7 @@ In the upstream repository of your Keptn project, you need to create two GitHub 
     ```
     * Finally, click **Create subscription** to save and enable the webhook for your Slack integration.
 
-## 2) Keptn project and service setup
+## Keptn project and service setup
 
 ### Create Keptn project
 
@@ -265,7 +281,7 @@ In the upstream repository of your Keptn project, you need to create two GitHub 
     keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonacci --image=ghcr.io/beeme1mr/kubecon-demo:latest
     ```
 
-## 3) Jaeger
+## Install and access Jaeger
 
 * Install Jaeger using its Helm Chart: https://jaegertracing.github.io/helm-charts/
 
@@ -276,7 +292,7 @@ helm upgrade -i jaeger jaegertracing/jaeger -n jaeger --create-namespace --set c
 
 > ToDo: Exposing Jaeger
 
-* Access Jaeger UI using
+* Access Jaeger UI using:
 
 ```
 export POD_NAME=$(kubectl get pods --namespace jaeger -l "app.kubernetes.io/instance=jaeger,app.kubernetes.io/component=query" -o jsonpath="{.items[0].metadata.name}")
@@ -284,7 +300,7 @@ echo http://127.0.0.1:8080/
 kubectl port-forward --namespace jaeger $POD_NAME 8080:16686
 ```
 
-## 4) Demo flow
+## Demo flow
 
 ### Prerequisite
 
@@ -305,7 +321,6 @@ keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonac
     ![Delivery in staging](./img/staging_finished.png)
 
     </details>
-
 
 * After the delivery in staging, Keptn starts a progressive delivery in production. This process will:  
     * Update the version of the fibonacci service
