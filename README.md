@@ -42,7 +42,7 @@ In this demo, Keptn will be used to manage the lifecycle of the Fibonacci servic
 
 # Feature flagging and lifecycle orchestration together
 
-> ToDo: Explanation of how OpenFeature and Keptn work together, including an architectural diagram and explanation of the use case
+> ToDo: Explanation of how OpenFeature and Keptn work together, including an architectural diagram and explanation of the use case - Link to the slide deck / PDF.
 
 # Step-by-step guide
 
@@ -133,27 +133,26 @@ To link to: http://localhost:8080/search?lookback=1h&service=fibonacci-productio
     * Payload:
     ```
     {
-        "text": "Delivery failed.",
-        "blocks": [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "Delivery failed."
-                },
-                "accessory": {
-                    "type": "button",
-                    "text": {
-                        "type": "plain_text",
-                        "text": "Open Jaeger",
-                        "emoji": true
-                    },
-                    "value": "click_me_123",
-                    "url": "http://localhost:8080/search",
-                    "action_id": "button-action"
-                }
-            }
-        ]
+      "blocks": [
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": ":x: Delivery of *{{.data.service}}* failed in *{{.data.stage}}*"
+          },
+          "accessory": {
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": "See Traces in Jaeger",
+              "emoji": true
+            },
+            "value": "click_me_123",
+            "url": "http://jaeger-query.jaeger.<YOUR-INGRESS-GW>.nip.io/search",
+            "action_id": "button-action"
+          }
+        }
+      ]
     }
     ```
     * Finally, click **Create subscription** to save and enable the webhook for your Slack integration.
@@ -171,8 +170,8 @@ To link to: http://localhost:8080/search?lookback=1h&service=fibonacci-productio
     * URL: https://hooks.slack.com/services/{{.secret.slack-webhook.token}}
     * Payload:
     ```
-    { 
-        "text":"Release in {{.data.stage}} finished with the feature enabled."
+    {
+      "text": ":white_check_mark: Delivery of *{{.data.service}}* in *{{.data.stage}}* finished with the new feature enabled"
     }
     ```
     * Finally, click **Create subscription** to save and enable the webhook for your Slack integration.
@@ -289,8 +288,6 @@ In the upstream repository of your Keptn project, you need to create two GitHub 
 helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
 helm upgrade -i jaeger jaegertracing/jaeger -n jaeger --create-namespace --set collector.service.otlp.http.port=4318,collector.service.otlp.grpc.port=4317
 ```
-
-> ToDo: Exposing Jaeger
 
 * Access Jaeger UI using:
 
