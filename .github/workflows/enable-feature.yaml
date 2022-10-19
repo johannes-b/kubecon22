@@ -47,17 +47,14 @@ jobs:
           valueFile: "fibonacci/helm/fibonacci/templates/configmap.yaml"
           propertyPath: 'data["config.json"]'
           value: ${{ steps.enable-feature.outputs.value }}
-          branch: enable-feature/${{ github.event.client_payload.flag_key }}
+          branch: enable-feature/${{ github.event.client_payload.shkeptncontext }}
           masterBranchName: ${{ github.event.client_payload.stage }}
           targetBranch: ${{ github.event.client_payload.stage }}
           createPR: true
           message: "Update ${{ github.event.client_payload.flag_key }} default variant to '${{ github.event.client_payload.default_variant }}'"
-          # TODO make the PR description useful
           description: |
             # Overview
-            Tests ran and everything looks great!
-            Links
-              - [Test Results](https://google.com)
+            The tests look good! Time to enable the feature.
           labels: |
             context:${{ github.event.client_payload.shkeptncontext }},
             triggeredid:${{ github.event.client_payload.id }},
