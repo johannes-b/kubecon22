@@ -1,5 +1,5 @@
-image: ghcr.io/beeme1mr/fib3r-kubecon-demo:latest
-replicaCount: 1
+image: ghcr.io/open-feature/playground-app:v0.2.0
+replicaCount: 3
 keptn:
   service: "fib3r"
   project: "fibonacci"

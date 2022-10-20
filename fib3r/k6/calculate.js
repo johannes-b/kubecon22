@@ -10,7 +10,7 @@ export const options = {
 };
 
 export default () => {
-  const BASE_URL = __ENV.BASE_URL || 'fibonacci.fibonacci-staging.svc.cluster.local:80';
+  const BASE_URL = __ENV.BASE_URL || 'fib3r.fibonacci-staging.svc.cluster.local:80';
   const res = http.get(`http://${BASE_URL}/calculate?num=40`);
   sleep(1);
   console.log(res.status)

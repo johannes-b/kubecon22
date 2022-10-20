@@ -1,0 +1,6 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: jaeger-query
+spec:
+  host: jaeger-query.jaeger.svc.cluster.local

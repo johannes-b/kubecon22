@@ -28,7 +28,7 @@ jobs:
         id: get-feature-flags
         uses: KJ002/read-yaml@main
         with:
-          file: "fibonacci/helm/fibonacci/templates/configmap.yaml"
+          file: "fib3r/helm/fib3r/templates/configmap.yaml"
           key-path: '["data", "config.json"]'
 
       - name: Enable Feature Flag
@@ -44,7 +44,7 @@ jobs:
       - name: Update Feature Config
         uses: fjogeleit/yaml-update-action@main
         with:
-          valueFile: "fibonacci/helm/fibonacci/templates/configmap.yaml"
+          valueFile: "fib3r/helm/fib3r/templates/configmap.yaml"
           propertyPath: 'data["config.json"]'
           value: ${{ steps.enable-feature.outputs.value }}
           branch: enable-feature/${{ github.event.client_payload.shkeptncontext }}

@@ -265,19 +265,19 @@ In the upstream repository of your Keptn project, you need to create two GitHub 
 
 * To upload its test and to configure the job executor service, execute:
     ```
-    cd ./fibonacci/k6
-    keptn add-resource --project=fibonacci --service=fibonacci --all-stages --resource=calculate.js --resourceUri=k6/calculate.js
+    cd ./fib3r/k6
+    keptn add-resource --project=fibonacci --service=fib3r --all-stages --resource=calculate.js --resourceUri=k6/calculate.js
 
-    keptn add-resource --project=fibonacci --service=fibonacci --stage=staging --resource=jobconfig_staging.yaml --resourceUri=job/config.yaml
-    keptn add-resource --project=fibonacci --service=fibonacci --stage=production --resource=jobconfig_production.yaml --resourceUri=job/config.yaml
+    keptn add-resource --project=fibonacci --service=fib3r --stage=staging --resource=jobconfig_staging.yaml --resourceUri=job/config.yaml
+    keptn add-resource --project=fibonacci --service=fib3r --stage=production --resource=jobconfig_production.yaml --resourceUri=job/config.yaml
     cd ../..
     ```
 
 * :+1: Great, now you're ready to trigger the first deployment:
     ```
-    keptn trigger delivery --sequence=deployment --project=fibonacci --service=fib3r --image=ghcr.io/beeme1mr/fib3r-kubecon-demo:latest
+    keptn trigger delivery --sequence=deployment --project=fibonacci --service=fibonacci --image=ghcr.io/open-feature/playground-fib-service:v0.2.0
 
-    keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonacci --image=ghcr.io/beeme1mr/kubecon-demo:latest
+    keptn trigger delivery --sequence=delivery --project=fibonacci --service=fib3r --image=ghcr.io/open-feature/playground-app:v0.2.0
     ```
 
 ## Install and access Jaeger
@@ -301,7 +301,7 @@ kubectl port-forward --namespace jaeger $POD_NAME 8080:16686
 
 ### Prerequisite
 
-* On the `production` branch in your upstream repository, set `FIB3R_PASS` to a value other than `my-fib3r-password`. You will find this setting in: `/fibonacci/helm/fibonacci/templates/deployment.yaml`
+* On the `production` branch in your upstream repository, set `FIB_SERVICE_PASS` to a value other than `my-fib3r-password`. You will find this setting in: `/fib3r/helm/fib3r/templates/deployment.yaml`
 
 * Reseting the feature flag: 
 
@@ -386,10 +386,10 @@ data:
     }
 ```
 
-### Starting a progressive delivery of the fibonacci service (main service)
+### Starting a progressive delivery of the fib3r app (main service)
 
 ```
-keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonacci --image=ghcr.io/beeme1mr/kubecon-demo:latest
+keptn trigger delivery --sequence=delivery --project=fibonacci --service=fib3r --image=ghcr.io/open-feature/playground-app:v0.2.0
 ```
 
 * In Keptn, the delivery of the new version in staging was successful and shows a green state: 
@@ -402,7 +402,7 @@ keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonac
     </details>
 
 * After the delivery in staging, Keptn starts a progressive delivery in production. This process will:  
-    * Update the version of the fibonacci service
+    * Update the version of the fib3r app
     * Deploy the new version using Helm
     * Start an end-to-end test using K6
 
@@ -417,13 +417,13 @@ keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonac
 ### Re-running the delivery
 
 ```
-keptn trigger delivery --sequence=delivery --project=fibonacci --service=fibonacci --image=ghcr.io/beeme1mr/kubecon-demo:latest
+keptn trigger delivery --sequence=delivery --project=fibonacci --service=fib3r --image=ghcr.io/open-feature/playground-app:v0.2.0 --stage=production
 ```
 
 * Like in the first run, the delivery in staging will be successful and shows a green state. 
 
 * After the delivery in staging, Keptn starts a progressive delivery in production. This process will:  
-    * Update the version of the fibonacci service
+    * Update the version of the fib3r app
     * Deploy the new version using Helm
     * Start an end-to-end test using K6
 

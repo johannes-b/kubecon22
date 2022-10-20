@@ -22,25 +22,27 @@ spec:
       containers:
         - name: fibonacci
           image: "{{ .Values.image }}"
-          args:
-            - flagd
           imagePullPolicy: "Always"
           ports:
-            - containerPort: 30000
+            - containerPort: 30001
           env:
             - name: DT_CUSTOM_PROP
               value: "keptn_project={{ .Values.keptn.project }} keptn_service={{ .Values.keptn.service }} keptn_stage={{ .Values.keptn.stage }} keptn_deployment={{ .Values.keptn.deployment }}"
-            - name: OTEL_TRACE_HOST
-              value: "jaeger-collector.jaeger.svc.cluster.local"
             - name: SERVICE_NAME
               value: "{{ .Values.keptn.service }}-{{ .Values.keptn.stage }}"
             - name: ENVIRONMENT
               value: "{{ .Values.keptn.stage }}"
-            - name: FIB3R_BASE_URL
+            - name: OTEL_EXPORTER_JAEGER_AGENT_HOST
+              value: "jaeger-agent.jaeger.svc.cluster.local"
+            - name: OTEL_EXPORTER_JAEGER_AGENT_PORT
+              value: "6832"
+            - name: OTEL_SERVICE_NAME
+              value: "{{ .Values.keptn.service }}-{{ .Values.keptn.stage }}"
+            - name: FIB_SERVICE_URL
               value: "http://fib3r.fibonacci-{{ .Values.keptn.stage }}.svc.cluster.local:30001"
-            - name: "FIB3R_USER"
+            - name: FIB_SERVICE_USER
               value: "my-fib3r-user"
-            - name: "FIB3R_PASS"
+            - name: FIB_SERVICE_PASS
               value: "my-fib3r-password"
           resources:
             requests:
@@ -49,16 +51,13 @@ spec:
             limits:
               cpu: 200m
               memory: 128Mi
-        - name: flagd
-          image: ghcr.io/open-feature/flagd:latest
-          args: ["start", "--uri", "/etc/flagd/config.json"]
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/flagd
-      volumes:
-        - name: config-volume
-          configMap:
-            name: feature-flags
-
-
-
+#        - name: flagd
+#          image: ghcr.io/open-feature/flagd:v0.2.4
+#          args: ["start", "--uri", "/etc/flagd/config.json"]
+#          volumeMounts:
+#            - name: config-volume
+#              mountPath: /etc/flagd
+#      volumes:
+#        - name: config-volume
+#          configMap:
+#            name: feature-flags

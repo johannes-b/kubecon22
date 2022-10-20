@@ -14,4 +14,4 @@ actions:
         image: "loadimpact/k6:0.39.0"
         cmd: ["k6"]
         # ToDo: set the correct stage
-        args: ["run", "-e", "BASE_URL=fibonacci.fibonacci-production.svc.cluster.local:80", "--duration", "30s", "--vus", "10", "/keptn/k6/calculate.js"]
+        args: ["run", "-e", "BASE_URL=fib3r.fibonacci-production.svc.cluster.local:80", "--duration", "30s", "--vus", "10", "/keptn/k6/calculate.js"]

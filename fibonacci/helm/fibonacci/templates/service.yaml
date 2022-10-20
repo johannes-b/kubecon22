@@ -9,5 +9,5 @@ spec:
     app: fibonacci
   ports:
   - name: http
-    port: 80
-    targetPort: 30000
+    port: 30001
+    targetPort: 30001
